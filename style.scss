@@ -1,0 +1,101 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #333;
+}
+
+.greetingBox {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	h1 {
+		font-size: 3rem;
+	}
+
+	&__buttonBox {
+		margin-top: 30px;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+
+		button {
+			padding: 20px 30px;
+			border: none;
+			border-radius: 10px;
+			color: white;
+			background-color: rgba($color: #000000, $alpha: 0.3);
+			transition: 0.3s;
+		}
+
+		button:hover {
+			background: rgba($color: #000000, $alpha: 0.6);
+		}
+	}
+}
+
+.quizBox {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 25px;
+	border-radius: 40px;
+	background: rgba($color: #000000, $alpha: 0.4);
+
+	.question {
+		font-size: 3rem;
+		color: white;
+	}
+
+	&__anserwsBox {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		margin-top: 60px;
+	}
+
+	&__buttonBox {
+		width: 100%;
+
+		.answer {
+			width: 100%;
+			padding: 15px 25px;
+			margin: 10px 0;
+			background: none;
+			border: 1px solid white;
+			border-radius: 20px;
+			color: white;
+			font-size: 2rem;
+		}
+
+		.answer:hover {
+			background: rgba($color: #000000, $alpha: 0.6);
+		}
+	}
+}
+
+.endQuiz {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 20px;
+    background-color: rgba($color: #000000, $alpha: 0.3);
+
+    .message {
+        color: white;
+        font-size: 40px;
+    }
+}
+
+.hidden {
+	display: none;
+}
