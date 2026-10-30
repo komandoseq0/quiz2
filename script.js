@@ -1,21 +1,26 @@
 'use strict';
 
-const btnStart = document.querySelector('.startQuizBtn');
-const greetBox = document.querySelector('.greetingBox');
-const quizBox = document.querySelector('.quizBox');
-const questionEl = document.querySelector('.question');
-const answersBtn = document.querySelectorAll('.answer');
-const endQuiz = document.querySelector(".endQuiz");
-const message = document.querySelector(".message");
+const btnStart      = document.querySelector('.startQuizBtn');
+const greetBox      = document.querySelector('.greetingBox');
+const quizBox       = document.querySelector('.quizBox');
+const questionEl    = document.querySelector('.question');
+const answersBtn    = document.querySelectorAll('.answer');
+const endQuiz       = document.querySelector('.endQuiz');
+const message       = document.querySelector('.message');
 
-btnStart.addEventListener('click', () => {
-	greetBox.classList.add('hidden');
-	quizBox.classList.remove('hidden');
-});
+const currentQEl    = document.querySelector('.currentQ');
+const totalQEl      = document.querySelector('.totalQ');
+const scoreDisplay  = document.querySelector('.scoreDisplay');
+const progressFill  = document.querySelector('.progressBar__fill');
+const statCorrect   = document.querySelector('.stat-correct');
+const statWrong     = document.querySelector('.stat-wrong');
+const restartBtn    = document.querySelector('.restartBtn');
 
 class App {
 	#playerPoints = 0;
-	#round = 0;
+	#round        = 0;
+	#quizStarted  = false;
+
 	#questions = [
 		{
 			text: 'Jakiego języka używa się do stylowania stron WWW?',
@@ -83,13 +88,14 @@ class App {
 			correct: 'getElementById()',
 		},
 	];
-	#quizStarted = false;
 
 	constructor() {
+		totalQEl.textContent = this.#questions.length;
 		btnStart.addEventListener('click', this._startQuiz.bind(this));
-		answersBtn.forEach((btn) =>
+		answersBtn.forEach(btn =>
 			btn.addEventListener('click', this._check.bind(this))
 		);
+		restartBtn.addEventListener('click', this._restart.bind(this));
 	}
 
 	_startQuiz() {
@@ -101,37 +107,83 @@ class App {
 
 	_showQuestion() {
 		if (!this.#quizStarted) return;
+
+		answersBtn.forEach(btn => {
+			btn.classList.remove('correct', 'wrong');
+			btn.disabled = false;
+		});
+
 		const question = this.#questions[this.#round];
-
 		questionEl.textContent = question.text;
-
 		answersBtn.forEach((btn, i) => (btn.textContent = question.answers[i]));
+
+		currentQEl.textContent = this.#round + 1;
+		scoreDisplay.textContent = this.#playerPoints;
+		const pct = (this.#round / this.#questions.length) * 100;
+		progressFill.style.width = `${pct}%`;
 	}
 
 	_check(e) {
-		const answer = e.target.textContent;
+		if (!this.#quizStarted) return;
 
-		if (this.#round === (this.#questions.length - 1)) {
-			this._endQuiz();
-			return;
+		const btn    = e.currentTarget;
+		const answer = btn.textContent;
+		const isCorrect = answer === this.#questions[this.#round].correct;
+
+		answersBtn.forEach(b => (b.disabled = true));
+		btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+		if (!isCorrect) {
+			answersBtn.forEach(b => {
+				if (b.textContent === this.#questions[this.#round].correct) {
+					b.classList.add('correct');
+				}
+			});
 		}
 
-        if (answer === this.#questions[this.#round]["correct"]) {
-			this.#playerPoints++;
-            this.#round++;
-			this._showQuestion();
+		if (isCorrect) this.#playerPoints++;
 
-        } else {
-			this.#round++;
-			this._showQuestion();
-		}
+		const isLast = this.#round === this.#questions.length - 1;
+
+		setTimeout(() => {
+			if (isLast) {
+				this._endQuiz();
+			} else {
+				this.#round++;
+				this._showQuestion();
+			}
+		}, 800);
 	}
 
 	_endQuiz() {
-		quizBox.classList.add("hidden");
-		endQuiz.classList.remove("hidden");
+		this.#quizStarted = false;
+		quizBox.classList.add('hidden');
+		endQuiz.classList.remove('hidden');
 
-		message.textContent = `Brawo ukończyłeś quiz poprawnie odpowiedziałeś na ${this.#playerPoints} pytań a źle na ${(this.#round + 1) - this.#playerPoints}`;
+		const wrong = this.#questions.length - this.#playerPoints;
+		statCorrect.textContent = this.#playerPoints;
+		statWrong.textContent   = wrong;
+
+		const pct = Math.round((this.#playerPoints / this.#questions.length) * 100);
+		let emoji = pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '💪';
+		document.querySelector('.endQuiz__emoji').textContent = emoji;
+
+		message.textContent = `Odpowiedziałeś poprawnie na ${this.#playerPoints} z ${this.#questions.length} pytań (${pct}%).`;
+
+		progressFill.style.width = '100%';
+	}
+
+	_restart() {
+		this.#playerPoints = 0;
+		this.#round        = 0;
+		this.#quizStarted  = false;
+
+		endQuiz.classList.add('hidden');
+		greetBox.classList.remove('hidden');
+
+		progressFill.style.width = '0%';
+		currentQEl.textContent   = 1;
+		scoreDisplay.textContent = 0;
 	}
 }
 

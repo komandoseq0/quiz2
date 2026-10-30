@@ -1,101 +1,273 @@
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+@use 'sass:color';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+$bg:            #0d0d0d;
+$surface:       #161616;
+$surface-2:     #1f1f1f;
+$border:        #2a2a2a;
+$accent:        #6c63ff;
+$accent-light:  #8b84ff;
+$success:       #22c55e;
+$error:         #ef4444;
+$text:          #f0f0f0;
+$text-muted:    #888;
+$radius-card:   24px;
+$radius-btn:    14px;
+$transition:    0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-	background-color: #333;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background-color: $bg;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba($accent, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 90%, rgba($accent-light, 0.08) 0%, transparent 60%);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: $text;
+  padding: 1.5rem;
+}
+
+%card {
+  width: min(540px, 100%);
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.55);
 }
 
 .greetingBox {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+  @extend %card;
+  text-align: center;
+  animation: fadeUp 0.4s ease both;
 
-	h1 {
-		font-size: 3rem;
-	}
+  &__icon {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+  }
 
-	&__buttonBox {
-		margin-top: 30px;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
+  h1 {
+    font-size: clamp(1.3rem, 4vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.35;
+    color: $text;
+    margin-bottom: 0.5rem;
+  }
 
-		button {
-			padding: 20px 30px;
-			border: none;
-			border-radius: 10px;
-			color: white;
-			background-color: rgba($color: #000000, $alpha: 0.3);
-			transition: 0.3s;
-		}
+  p {
+    color: $text-muted;
+    font-size: 0.925rem;
+    margin-bottom: 2rem;
+  }
 
-		button:hover {
-			background: rgba($color: #000000, $alpha: 0.6);
-		}
-	}
+  &__buttonBox {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .quizBox {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	padding: 25px;
-	border-radius: 40px;
-	background: rgba($color: #000000, $alpha: 0.4);
+  @extend %card;
+  animation: fadeUp 0.35s ease both;
 
-	.question {
-		font-size: 3rem;
-		color: white;
-	}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.75rem;
+  }
 
-	&__anserwsBox {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
-		margin-top: 60px;
-	}
+  &__progress {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $text-muted;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
 
-	&__buttonBox {
-		width: 100%;
+  &__score {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $accent-light;
+    background: rgba($accent, 0.12);
+    padding: 4px 10px;
+    border-radius: 99px;
+  }
 
-		.answer {
-			width: 100%;
-			padding: 15px 25px;
-			margin: 10px 0;
-			background: none;
-			border: 1px solid white;
-			border-radius: 20px;
-			color: white;
-			font-size: 2rem;
-		}
+  .progressBar {
+    width: 100%;
+    height: 3px;
+    background: $surface-2;
+    border-radius: 99px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
 
-		.answer:hover {
-			background: rgba($color: #000000, $alpha: 0.6);
-		}
-	}
+    &__fill {
+      height: 100%;
+      background: linear-gradient(90deg, $accent, $accent-light);
+      border-radius: 99px;
+      transition: width 0.4s $transition;
+      width: 0%;
+    }
+  }
+
+  .quizbox__questionBox {
+    margin-bottom: 1.75rem;
+  }
+
+  .question {
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
+    font-weight: 500;
+    line-height: 1.5;
+    color: $text;
+  }
+
+  &__anserwsBox {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  &__buttonBox {
+    width: 100%;
+
+    .answer {
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      background: $surface-2;
+      border: 1px solid $border;
+      border-radius: $radius-btn;
+      color: $text;
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: 400;
+      text-align: left;
+      cursor: pointer;
+      transition: background $transition, border-color $transition, transform $transition;
+
+      &:hover {
+        background: color.adjust($surface-2, $lightness: 4%);
+        border-color: $accent;
+        transform: translateX(4px);
+      }
+
+      &:active {
+        transform: translateX(2px) scale(0.99);
+      }
+
+      &.correct {
+        background: rgba($success, 0.15);
+        border-color: $success;
+        color: $success;
+      }
+
+      &.wrong {
+        background: rgba($error, 0.12);
+        border-color: $error;
+        color: $error;
+      }
+    }
+  }
 }
 
 .endQuiz {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	padding: 20px;
-    background-color: rgba($color: #000000, $alpha: 0.3);
+  @extend %card;
+  text-align: center;
+  animation: fadeUp 0.4s ease both;
 
-    .message {
-        color: white;
-        font-size: 40px;
+  &__emoji {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .message {
+    font-size: 0.95rem;
+    color: $text-muted;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__stat {
+    background: $surface-2;
+    border: 1px solid $border;
+    border-radius: 16px;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+
+    span:first-child {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $accent-light;
     }
+
+    span:last-child {
+      font-size: 0.75rem;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  background: $accent;
+  border: none;
+  border-radius: $radius-btn;
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition, transform $transition, box-shadow $transition;
+  box-shadow: 0 4px 20px rgba($accent, 0.35);
+
+  &:hover {
+    background: $accent-light;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba($accent, 0.45);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .hidden {
-	display: none;
+  display: none !important;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
